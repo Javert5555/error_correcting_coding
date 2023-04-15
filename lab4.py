@@ -236,7 +236,7 @@ def get_sys_init_matrix(sys_matrix, init_type_matrix_value):
 
 
 # функция возвращает массив пикселей (в каждом пикселе по 3 вектора, обозначающих rgb соответственно)
-def get_array_pixels(img_array):
+def get_array_pixels(img_array, len_of_vector):
     # структура img_array = [
     #    [
     #      [12, 133, 42],
@@ -257,7 +257,7 @@ def get_array_pixels(img_array):
             for rgb in img_array[i][j]:
                 # print(rgb, '2')
                 vector = [int(num) for num in list(bin(rgb)[2:])]
-                while len(vector) != 8:
+                while len(vector) != len_of_vector:
                     vector.insert(0, 0)
                 # print(vector, '3')
                 array_pixels[i][j].append(vector)
@@ -265,13 +265,14 @@ def get_array_pixels(img_array):
 
 # функция делает от 0 до 2 ошибок в векторе
 def make_mistake_in_vector(vector):
+    vector_copy = deepcopy(vector)
     for i in range(randint(1, 2)):
-        num = randint(0, 7)
-        if (vector[num] == 0):
-            vector[num] = 1
+        num = randint(0, len(vector_copy) - 1)
+        if (vector_copy[num] == 0):
+            vector_copy[num] = 1
         else:
-            vector[num] = 0
-    return vector
+            vector_copy[num] = 0
+    return vector_copy
 
 # функция делает от 0 до 2 ошибок во всех векторах (в пикселе 3 вектора, ибо rgb)
 def make_mistake_in_pixels(array_pixels):
@@ -328,14 +329,14 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
         [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1],
         [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1],
         [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
-        [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1],
         [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
     ])
 
-    print(input_matrix_values)
+    # print(input_matrix_values)
 
     init_type_matrix_value = 'general'
 
@@ -348,22 +349,21 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
 
     general_sys_matrix = get_sys_init_matrix(input_matrix_values, init_type_matrix_value)
 
-    print(general_sys_matrix)
+    # print(general_sys_matrix)
     # если матрица не может быть приведена к систематическому виду просто прерываем выполнение программы
     if np.size(general_sys_matrix) == 0: return
 
     p_matrix = get_p_matrix(general_sys_matrix, init_type_matrix_value)
 
-    print(p_matrix)
+    # print(p_matrix)
 
     # если матрицы P не существует, то прерываем выполнение программы
     if p_matrix is None: return
 
     # из списка map объектов в обычный список
     checking_sys_matrix = [list(row) for row in get_checking_sys_matrix_from_general_sys(p_matrix, init_type_matrix_value)]
-    for el in checking_sys_matrix:
-
-        print(el)
+    # for el in checking_sys_matrix:
+    #     print(el)
 
     code_speed = round(code_dimension/code_length, 2)
     
@@ -392,8 +392,15 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
         for j in range(len(array_pixels_with_mistakes_copy[i])):
             # print(array_pixels[i][j])
             for k in range(len(array_pixels_with_mistakes_copy[i][j])):
-                array_pixels_with_mistakes_copy[i][j][k]
-    
+                print(array_pixels_with_mistakes_copy[i][j][k])
+                # получаем индекс соответствующего информационного слова
+                index_of_code_word = inf_words.index(array_pixels_with_mistakes_copy[i][j][k])
+                
+                # получаем закодированное информационное слово
+                # print(code_words[index_of_code_word])
+                code_word_with_mistake = make_mistake_in_vector(code_words[index_of_code_word])
+                print(code_word_with_mistake)
+
                 if (num_errors_fixed != 0 and array_pixels_with_mistakes_copy[i][j][k]):
 
                     checking_sys_matrix_transpose = np.array(checking_sys_matrix).transpose()
@@ -401,8 +408,8 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
                     # print('checking_sys_matrix_transpose',checking_sys_matrix_transpose)
                     # print(checking_sys_matrix_transpose)
                     # print(array_pixels_with_mistakes_copy[i][j][k])
-                    if (len(array_pixels_with_mistakes_copy[i][j][k]) != len(checking_sys_matrix_transpose)):
-                        # messagebox.showwarning(title="Предупреждение", message="Длина v-вектора не равна количеству строк проверочной систематической транспонированной матрицы")
+                    if (len(code_word_with_mistake) != len(checking_sys_matrix_transpose)):
+                        messagebox.showwarning(title="Предупреждение", message="Длина v-вектора не равна количеству строк проверочной систематической транспонированной матрицы")
                         return
 
                     error_vectors = get_error_vectors(checking_sys_matrix_transpose)
@@ -411,7 +418,7 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
                     syndromes = get_code_words_or_syndromes(checking_sys_matrix_transpose, error_vectors)
                     # print('syndromes',syndromes)
 
-                    s_vector = product_vector_matrix(array_pixels_with_mistakes_copy[i][j][k], checking_sys_matrix_transpose)
+                    s_vector = product_vector_matrix(code_word_with_mistake, checking_sys_matrix_transpose)
                     # print('s_vector',s_vector)
                     
                     # получаем индекс нашего синдрома
@@ -420,7 +427,7 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
                         # print('index_of_s_vector',index_of_s_vector)
                     # если полученного синдрома нет в списке синдромов, то прерываем работу программы с ошибкой
                     except:
-                        messagebox.showwarning(title="Предупреждение", message="Для данного вектора нет решения")
+                        messagebox.showwarning(title="Предупреждение", message="Для данного вектора нет решения (в синдроме)")
                         return
                     
                     # получаем вектор ошибки с таким же индексом, как и у полученного синдрома
@@ -429,26 +436,31 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
 
                     # получаем кодовое слово
                     # для сложения векторов конвертируем из обычных массивов в np.Array() - объекты
-                    c_vector = list(np.array(array_pixels_with_mistakes_copy[i][j][k]) + np.array(e_vector))
+                    c_vector = list(np.array(code_word_with_mistake) + np.array(e_vector))
 
                     # в случае если случилась ситуация 1+1 в векторе c
-                    for i in range(len(c_vector)):
-                        if (c_vector[i] == 2):
-                            c_vector[i] = 0
+                    for d in range(len(c_vector)):
+                        if (c_vector[d] == 2):
+                            c_vector[d] = 0
 
                     # print('c_vector',c_vector)
-
                     # получаем индекс нашего кодового слова
                     try:
+                        # print(c_vector, 'c_vector')
+                        # print(code_words)
                         index_of_c_vector = code_words.index(c_vector)
+                        # index_of_c_vector = code_words.index([1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0])
                         # print('index_of_c_vector',index_of_c_vector)
                     # если полученного кодового слова нет в списке синдромов, то прерываем работу программы с ошибкой
                     except:
-                        messagebox.showwarning(title="Предупреждение", message="Для данного вектора нет решения")
+                        messagebox.showwarning(title="Предупреждение", message="Для данного вектора нет решения (в код. словах)")
                         return
                     
                     # получаем информационное слово с таким же индексом, как и у кодового слова
+                    # print(array_pixels_with_mistakes_copy)
+                    # print(len(array_pixels_with_mistakes_copy))
                     array_pixels_with_mistakes_copy[i][j][k] = inf_words[index_of_c_vector]
+                    print(inf_words[index_of_c_vector])
                     # print('i_vector',i_vector)
 
     return array_pixels_with_mistakes_copy
@@ -456,8 +468,9 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
 
 def get_solution():
     img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
-
-    array_pixels = get_array_pixels(img_array)
+    
+    len_of_color_in_double = 8
+    array_pixels = get_array_pixels(img_array, len_of_color_in_double)
     # print(make_mistake_in_vector([0, 1, 1, 1, 0, 1, 0, 0]))
     array_pixels_with_mistakes = make_mistake_in_pixels(array_pixels)
     # print(array_pixels_with_mistakes)
@@ -466,7 +479,7 @@ def get_solution():
     # print(np.array(array_pixels_with_mistakes))
 
     img_with_mistakes = Image.fromarray(np.array(img_array_from_array_pixels, dtype=np.uint8))
-    img_with_mistakes.save('./img_with_mistakes.png')
+    img_with_mistakes.save('./assets/img_with_mistakes.png')
 
     # print(array_pixels_with_mistakes)
 
@@ -484,3 +497,7 @@ get_solution()
 # .insert(0, 0)
 # print(bin(256))
 # print(''.join([str(num) for num in [0, 1, 1, 1, 0, 1, 0, 0]]))
+
+# 0111101111010011100101110
+
+# 0110101111010011110101110
