@@ -1,39 +1,46 @@
 import tkinter
+# from tkinter import ttk
 from PIL import Image, ImageTk
 import numpy as np
 from random import randint
 from math import floor
 from tkinter import messagebox
-
+from tkinter import filedialog as fd
+# from tkinter.messagebox import showinfo
 from copy import deepcopy
 
 
-img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
+# # img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
 
-# print(img_array)
+# # # print(img_array)
 
-root = tkinter.Tk()
+# root = tkinter.Tk()
 
-# создаем рабочую область
-frame = tkinter.Frame(root)
-frame.grid()
+# # # создаем рабочую область
+# frame = tkinter.Frame(root)
+# frame.grid()
 
-#Добавим метку
-label = tkinter.Label(frame, text="Hello, World!").grid(row=1,column=1)
+# # #Добавим метку
+# # label = tkinter.Label(frame, text="Hello, World!").grid(row=1,column=1)
 
 
-# вставляем кнопку
-but = tkinter.Button(frame, text="Кнопка").grid(row=1, column=2)
+# # # вставляем кнопку
+# # but = tkinter.Button(frame, text="Кнопка").grid(row=1, column=2)
 
-#Добавим изображение
-canvas = tkinter.Canvas(root, height=400, width=700)
-image = Image.open("./poehaly8x6.jpg")
-photo = ImageTk.PhotoImage(image)
-image = canvas.create_image(0, 0, anchor='nw',image=photo)
-canvas.grid(row=2,column=1)
+# # #Добавим изображение
+# # canvas = tkinter.Canvas(root, height=400, width=700)
+# # image = Image.open("./poehaly8x6.jpg")
+# # photo = ImageTk.PhotoImage(image)
+# # image = canvas.create_image(0, 0, anchor='nw',image=photo)
+# # canvas.grid(row=2,column=1)
+# # # root.mainloop()
+
+# canvas = tkinter.Canvas(root, height=400, width=700)
+# image = Image.open("./poehaly.jpg")
+# photo = ImageTk.PhotoImage(image)
+# image = canvas.create_image(0, 0, anchor='nw',image=photo)
+# canvas.grid(row=2,column=1)
 # root.mainloop()
-
-
 
 
 
@@ -451,7 +458,7 @@ def get_array_pixels(img_array, len_of_vector):
                 array_pixels[i][j].append(vector)
     return array_pixels
 
-# функция делает от 0 до 2 ошибок в векторе
+# функция делает от 0 до num_of_errors ошибок в векторе
 def make_mistake_in_vector(vector, num_of_errors):
     vector_copy = deepcopy(vector)
     # # Если хотим чтобы ошибки не накладывались друг на друга - раскоментировать нижнее
@@ -473,7 +480,7 @@ def make_mistake_in_vector(vector, num_of_errors):
     # print('#####################')
     return vector_copy
 
-# функция делает от 0 до 2 ошибок во всех векторах (в пикселе 3 вектора, ибо rgb)
+# функция делает от 0 до num_of_errors ошибок во всех векторах (в пикселе 3 вектора, ибо rgb)
 def make_mistake_in_pixels(array_pixels, num_of_errors):
     array_pixels_copy = deepcopy(array_pixels)
     # структура array_pixels = [
@@ -496,6 +503,7 @@ def make_mistake_in_pixels(array_pixels, num_of_errors):
     # print(array_pixels)
     return array_pixels_copy
 
+# из массива пикселей, состоящих из 3 векторов, в массив пикселей, состоящих из 3 
 def get_img_array_from_array_pixels(array_pixels_with_mistakes):
     array_pixels_with_mistakes_copy = deepcopy(array_pixels_with_mistakes)
     # структура img_array = [
@@ -685,8 +693,9 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     return array_pixels_with_mistakes_copy
 
 
-def get_solution():
-    img_array = np.asarray(Image.open('./poehaly.jpg').convert('RGB'))
+def get_solution(path_to_image):
+    # img_array = np.asarray(Image.open('./poehaly.jpg').convert('RGB'))
+    img_array = np.asarray(Image.open(path_to_image).convert('RGB'))
 
     
     len_of_color_in_double = 8
@@ -713,19 +722,83 @@ def get_solution():
     img_without_mistakes.save('./assets/img_without_mistakes.png')
     # print(array_pixels_without_mistakes)
 
+    img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
+
     ################################
 
-get_solution()
+######################################## 
+############## tkinter #################
+########################################
 
-# print(img_array.shape)
-# .insert(0, 0)
-# print(bin(256))
-# print(''.join([str(num) for num in [0, 1, 1, 1, 0, 1, 0, 0]]))
+# root = tkinter.Tk()
+# root.title('Tkinter Open File Dialog')
+# root.resizable(False, False)
+# root.geometry('300x150')
 
-# 0111101111010011100101110
 
-# 0110101111010011110101110
+# def select_file():
+#     filetypes = (
+#         ('text files', '*.txt'),
+#         ('All files', '*.*')
+#     )
 
+#     filename = fd.askopenfilename(
+#         title='Open a file',
+#         initialdir='/',
+#         filetypes=filetypes)
+
+#     showinfo(
+#         title='Selected File',
+#         message=filename
+#     )
+
+
+# # open button
+# open_button = ttk.Button(
+#     root,
+#     text='Open a File',
+#     command=select_file
+# )
+
+# open_button.pack(expand=True)
+
+
+# # run the application
+# root.mainloop()
+
+root = tkinter.Tk()
+root.title('Tkinter Open File Dialog')
+root.resizable(False, False)
+root.geometry('300x150')
+filename = fd.askopenfilename()
+print(filename)
+get_solution(filename)
+frame = tkinter.Frame(root)
+frame.grid()
+# #Добавим метку
+root.geometry('1000x500')
+label = tkinter.Label(frame, text="Фото").grid(row=1,column=1)
+canvas = tkinter.Canvas(root, height=400, width=700)
+image = Image.open(filename)
+photo = ImageTk.PhotoImage(image)
+image = canvas.create_image(0, 0, anchor='nw',image=photo)
+canvas.grid(row=2,column=1)
+root.mainloop()
+
+# root.quit()
+def createNewWindow():
+    win1 = tkinter.Toplevel()
+    # # создаем рабочую область
+    frame = tkinter.Frame(win1)
+    frame.grid()
+    # #Добавим метку
+    label = tkinter.Label(frame, text="Фото с ошибками").grid(row=1,column=1)
+    canvas = tkinter.Canvas(win1, height=400, width=700)
+    image = Image.open("./assets/img_with_mistakes.png")
+    photo = ImageTk.PhotoImage(image)
+    image = canvas.create_image(0, 0, anchor='nw',image=photo)
+    canvas.grid(row=2,column=1)
+    win1.mainloop()
 
 
 
