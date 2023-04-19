@@ -452,15 +452,15 @@ def get_array_pixels(img_array, len_of_vector):
     return array_pixels
 
 # функция делает от 0 до 2 ошибок в векторе
-def make_mistake_in_vector(vector):
+def make_mistake_in_vector(vector, num_of_errors):
     vector_copy = deepcopy(vector)
-    # # 
+    # # Если хотим чтобы ошибки не накладывались друг на друга - раскоментировать нижнее
     # num_memory = -1
     # #
     # print(vector_copy)
-    for i in range(2-1):
+    for i in range(randint(0,num_of_errors)):
         num = randint(0, len(vector_copy) - 1)
-        # # 
+        # # Если хотим чтобы ошибки не накладывались друг на друга - раскоментировать нижнее
         # while num_memory == num:
         #     num = randint(0, len(vector_copy) - 1)
         # num_memory = num
@@ -474,7 +474,7 @@ def make_mistake_in_vector(vector):
     return vector_copy
 
 # функция делает от 0 до 2 ошибок во всех векторах (в пикселе 3 вектора, ибо rgb)
-def make_mistake_in_pixels(array_pixels):
+def make_mistake_in_pixels(array_pixels, num_of_errors):
     array_pixels_copy = deepcopy(array_pixels)
     # структура array_pixels = [
     #    [
@@ -492,7 +492,7 @@ def make_mistake_in_pixels(array_pixels):
         for j in range(len(array_pixels_copy[i])):
             # print(array_pixels_copy[i][j])
             for k in range(len(array_pixels_copy[i][j])):
-                array_pixels_copy[i][j][k] = make_mistake_in_vector(array_pixels_copy[i][j][k])
+                array_pixels_copy[i][j][k] = make_mistake_in_vector(array_pixels_copy[i][j][k], num_of_errors)
     # print(array_pixels)
     return array_pixels_copy
 
@@ -525,54 +525,31 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     array_pixels_with_mistakes_copy = deepcopy(array_pixels_with_mistakes)
     # print(array_pixels_with_mistakes_copy)
 
+
+
     # input_matrix_values = np.array([
-    #     [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0],
-    #     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1],
-    #     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
-    #     [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1],
-    #     [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1]
+    #     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+    #     [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
+    #     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0],
+    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0],
+    #     [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1],
+    #     [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+    #     [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0]
     # ])
 
     input_matrix_values = np.array([
-        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
-        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1],
-        [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1],
-        [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0]
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1],
+        [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1],
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+        [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
     ])
 
-    # input_matrix_values = np.array([
-    #     [1, 0, 0, 0, 0, 0, 0, 0,],
-    #     [0, 1, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 1, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 1, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 1, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 1, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 1]
-    # ])
 
-    # # print(input_matrix_values)
-    # octal_vectors = []
-
-    # for i in range(56):
-    #     len_of_vector = 8
-    #     vector = [int(num) for num in list(bin(i)[2:])]
-    #     while len(vector) != len_of_vector:
-    #         vector.insert(0, 0)
-    #     octal_vectors.append(vector)
-    # octal_vectors = np.array(octal_vectors)
-    # # print(np.array(vectors))
-
-    # input_matrix_values = np.concatenate((input_matrix_values, octal_vectors.T), axis=1)
-
-    # # print(input_matrix_values)
 
     init_type_matrix_value = 'general'
 
@@ -635,55 +612,58 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
         for j in range(len(array_pixels_with_mistakes_copy[i])):
             # print(array_pixels[i][j])
             for k in range(len(array_pixels_with_mistakes_copy[i][j])):
-                # print(array_pixels_with_mistakes_copy[i][j][k])
-                # получаем индекс соответствующего информационного слова
-                index_of_code_word = inf_words.index(array_pixels_with_mistakes_copy[i][j][k])
-                
-                # получаем закодированное информационное слово
-                # print(code_words[index_of_code_word])
-                # print(code_words[index_of_code_word])
-                code_word_with_mistake = make_mistake_in_vector(deepcopy(code_words[index_of_code_word]))
-                # print(code_word_with_mistake)
-                # print('########################')
-
-                if (num_errors_fixed != 0 and array_pixels_with_mistakes_copy[i][j][k]):
-                    
-                    # print('checking_sys_matrix_transpose',checking_sys_matrix_transpose)
-                    # print(checking_sys_matrix_transpose)
+                while array_pixels_with_mistakes_copy[i][j][k] in code_words == False:
                     # print(array_pixels_with_mistakes_copy[i][j][k])
-                    if (len(code_word_with_mistake) != len(deepcopy(checking_sys_matrix_transpose))):
-                        messagebox.showwarning(title="Предупреждение", message="Длина v-вектора не равна количеству строк проверочной систематической транспонированной матрицы")
-                        return
-
-                    s_vector = product_vector_matrix(deepcopy(code_word_with_mistake), deepcopy(checking_sys_matrix_transpose))
-                    # print('error_vectors\n',np.array(deepcopy(error_vectors)))
-                    # print('syndromes\n',np.array(deepcopy(syndromes)))
-                    # print('s_vector',s_vector)
+                    # получаем индекс соответствующего информационного слова
+                    index_of_code_word = inf_words.index(array_pixels_with_mistakes_copy[i][j][k])
                     
-                    # получаем индекс нашего синдрома
-                    try:
-                        index_of_s_vector = syndromes.index(s_vector)
-                        # print('index_of_s_vector',index_of_s_vector)
-                    # если полученного синдрома нет в списке синдромов, то прерываем работу программы с ошибкой
-                    except:
-                        messagebox.showwarning(title="Предупреждение", message="Для данного вектора нет решения (в синдроме)")
-                        return
-                    
-                    # получаем вектор ошибки с таким же индексом, как и у полученного синдрома
-                    e_vector = deepcopy(error_vectors[index_of_s_vector])
-                    # print('e_vector',e_vector)
+                    # получаем закодированное информационное слово
+                    # print(code_words[index_of_code_word])
+                    # print(code_words[index_of_code_word])
+                    code_word_with_mistake = make_mistake_in_vector(deepcopy(code_words[index_of_code_word]), num_errors_fixed)
+                    # print(code_word_with_mistake)
+                    # print('########################')
 
-                    # получаем кодовое слово
-                    # для сложения векторов конвертируем из обычных массивов в np.Array() - объекты
-                    c_vector = list(np.array(deepcopy(code_word_with_mistake)) + np.array(deepcopy(e_vector)))
+                    if (num_errors_fixed != 0 and array_pixels_with_mistakes_copy[i][j][k]):
+                        
+                        # print('checking_sys_matrix_transpose',checking_sys_matrix_transpose)
+                        # print(checking_sys_matrix_transpose)
+                        # print(array_pixels_with_mistakes_copy[i][j][k])
+                        if (len(code_word_with_mistake) != len(deepcopy(checking_sys_matrix_transpose))):
+                            messagebox.showwarning(title="Предупреждение", message="Длина v-вектора не равна количеству строк проверочной систематической транспонированной матрицы")
+                            return
 
-                    # в случае если случилась ситуация 1+1 в векторе c
-                    for d in range(len(c_vector)):
-                        if (c_vector[d] == 2):
-                            c_vector[d] = 0
+                        s_vector = product_vector_matrix(deepcopy(code_word_with_mistake), deepcopy(checking_sys_matrix_transpose))
+                        # print('error_vectors\n',np.array(deepcopy(error_vectors)))
+                        # print('syndromes\n',np.array(deepcopy(syndromes)))
+                        # print('s_vector',s_vector)
+                        
+                        # получаем индекс нашего синдрома
+                        try:
+                            index_of_s_vector = syndromes.index(s_vector)
+                            # print('index_of_s_vector',index_of_s_vector)
+                        # если полученного синдрома нет в списке синдромов, то прерываем работу программы с ошибкой
+                        except:
+                            messagebox.showwarning(title="Предупреждение", message="Для данного вектора нет решения (в синдроме)")
+                            return
+                        
+                        # получаем вектор ошибки с таким же индексом, как и у полученного синдрома
+                        e_vector = deepcopy(error_vectors[index_of_s_vector])
+                        # print('e_vector',e_vector)
 
-                    # print('c_vector',c_vector)
-                    # получаем индекс нашего кодового слова
+                        # получаем кодовое слово
+                        # для сложения векторов конвертируем из обычных массивов в np.Array() - объекты
+                        c_vector = list(np.array(deepcopy(code_word_with_mistake)) + np.array(deepcopy(e_vector)))
+
+                        # в случае если случилась ситуация 1+1 в векторе c
+                        for d in range(len(c_vector)):
+                            if (c_vector[d] == 2):
+                                c_vector[d] = 0
+
+                        # print('c_vector',c_vector)
+                        # получаем индекс нашего кодового слова
+                        array_pixels_with_mistakes_copy[i][j][k] = c_vector
+
                     try:
                         # print(c_vector, 'c_vector')
                         # print(code_words)
@@ -706,14 +686,16 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
 
 
 def get_solution():
-    img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
+    img_array = np.asarray(Image.open('./poehaly.jpg').convert('RGB'))
 
     
     len_of_color_in_double = 8
+
+    # получаем массив пикселей
     array_pixels = get_array_pixels(img_array, len_of_color_in_double)
-    # print(array_pixels)
-    # print(make_mistake_in_vector([0, 1, 1, 1, 0, 1, 0, 0]))
-    array_pixels_with_mistakes = make_mistake_in_pixels(array_pixels)
+
+    # получаем пиксели с количеством ошибок равным 3
+    array_pixels_with_mistakes = make_mistake_in_pixels(array_pixels, 3)
     # print(array_pixels_with_mistakes)
 
     img_array_from_array_pixels = get_img_array_from_array_pixels(array_pixels_with_mistakes)
@@ -743,3 +725,66 @@ get_solution()
 # 0111101111010011100101110
 
 # 0110101111010011110101110
+
+
+
+
+
+
+# Для 3 ошибок
+# 1 0 0 0 0 0 0 0 1 1 1 0 1 0 1 1 1 1 0 0 1 0 0 1 1
+# 0 1 0 0 0 0 0 0 0 1 0 1 0 0 1 0 1 0 0 1 1 1 1 0 0
+# 0 0 1 0 0 0 0 0 0 0 1 0 1 1 1 1 0 1 1 1 1 0 1 1 1
+# 0 0 0 1 0 0 0 0 0 1 0 1 1 0 1 0 1 1 0 0 1 0 1 1 1
+# 0 0 0 0 1 0 0 0 1 0 1 1 1 1 0 1 1 1 1 1 1 1 0 0 1
+# 0 0 0 0 0 1 0 0 1 1 0 1 0 1 0 1 1 1 0 1 1 0 1 0 1
+# 0 0 0 0 0 0 1 0 1 0 1 0 0 1 1 0 1 0 1 1 1 0 0 1 0
+# 0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 1 1 1 1 1 0 1 1 1 1
+
+# [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1]
+# [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0]
+# [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+# [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1]
+# [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1]
+# [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1]
+# [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0]
+# [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
+
+# Для 2 ошибок
+# 1 0 0 0 0 0 0 0 1 1 1 0 1 0 1 1 1 1 0 0
+# 0 1 0 0 0 0 0 0 0 1 0 1 0 0 1 0 1 0 0 1
+# 0 0 1 0 0 0 0 0 0 0 1 0 1 1 1 1 0 1 1 1
+# 0 0 0 1 0 0 0 0 0 1 0 1 1 0 1 0 1 1 0 0
+# 0 0 0 0 1 0 0 0 1 0 1 1 1 1 0 1 1 1 1 1
+# 0 0 0 0 0 1 0 0 1 1 0 1 0 1 0 1 1 1 0 1
+# 0 0 0 0 0 0 1 0 1 0 1 0 0 1 1 0 1 0 1 1
+# 0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 1 1 1 1 1
+
+# [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0]
+# [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1]
+# [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1]
+# [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0]
+# [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1]
+# [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1]
+# [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1]
+# [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]
+
+
+# Для 2 ошибок
+# 1 0 0 0 0 0 0 0 1 1 1 0 1 0 1 1 1 1 0
+# 0 1 0 0 0 0 0 0 0 1 0 1 0 1 1 1 1 0 1
+# 0 0 1 0 0 0 0 0 1 0 1 0 1 1 1 1 0 1 1
+# 0 0 0 1 0 0 0 0 0 1 0 1 1 0 1 0 1 1 0
+# 0 0 0 0 1 0 0 0 1 0 1 1 1 1 0 1 1 1 1
+# 0 0 0 0 0 1 0 0 1 1 0 1 0 1 0 1 1 1 0
+# 0 0 0 0 0 0 1 0 0 0 1 0 1 1 1 0 1 0 1
+# 0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 1 1 1 1
+
+# [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0]
+# [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1]
+# [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1]
+# [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0]
+# [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1]
+# [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0]
+# [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1]
+# [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1]
