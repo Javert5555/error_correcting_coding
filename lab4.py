@@ -525,6 +525,13 @@ def get_img_array_from_array_pixels(array_pixels_with_mistakes):
                 array_pixels_with_mistakes_copy[i][j][k] = int(''.join([str(num) for num in array_pixels_with_mistakes_copy[i][j][k]]), 2)
     return array_pixels_with_mistakes_copy
 
+# для вывода промежуточных матриц
+def print_matr(text, matr):
+    print(text)
+    for row in deepcopy(matr):
+        print(''.join(str(el) for el in row))
+    print('')
+
 def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     ################################
     # исправляем ошибки в векторах #
@@ -557,7 +564,7 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
     ])
 
-
+    print_matr('Порождающая матрица: ', input_matrix_values)
 
     init_type_matrix_value = 'general'
 
@@ -569,6 +576,8 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     code_length = column_count
 
     general_sys_matrix = get_sys_init_matrix(input_matrix_values, init_type_matrix_value)
+
+    print_matr('Порождающая, систематическая матрица: ', general_sys_matrix)
 
     # print(general_sys_matrix)
     # если матрица не может быть приведена к систематическому виду просто прерываем выполнение программы
@@ -585,6 +594,7 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     checking_sys_matrix = [list(row) for row in get_checking_sys_matrix_from_general_sys(p_matrix, init_type_matrix_value)]
     # for el in checking_sys_matrix:
     #     print(el)
+    print_matr('Проверочная, систематическая матрица: ', checking_sys_matrix)
 
     code_speed = round(code_dimension/code_length, 2)
     
@@ -593,9 +603,11 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
 
     inf_words = get_inf_words(code_dimension, alphabet_power)
     # print('inf_words',inf_words)
+    print_matr('Информационные слова: ', inf_words)
 
     code_words = get_code_words_or_syndromes(general_sys_matrix, inf_words)
     # print('code_words',code_words)
+    print_matr('Кодовые слова: ', code_words)
 
     wtn = get_wtn(code_words)
     # print('wtn',wtn)
@@ -610,11 +622,15 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     # print('num_errors_found',num_errors_found)
     checking_sys_matrix_transpose = np.array(deepcopy(checking_sys_matrix)).transpose()
 
+    print_matr('Проверочная, систематическая, транспонированная матрица: ', checking_sys_matrix_transpose)
+
     error_vectors = get_error_vectors(deepcopy(checking_sys_matrix_transpose))
     # print('error_vectors',error_vectors)
+    print_matr('Векторы ошибок: ', error_vectors)
 
     syndromes = get_code_words_or_syndromes(deepcopy(checking_sys_matrix_transpose), deepcopy(error_vectors))
     # print('syndromes',syndromes)
+    print_matr('Синдромы: ', syndromes)
 
     for i in range(len(array_pixels_with_mistakes_copy)):
         for j in range(len(array_pixels_with_mistakes_copy[i])):
@@ -725,81 +741,57 @@ def get_solution(path_to_image):
     img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
 
     ################################
+# get_solution('./poehaly.jpg')
 
 ######################################## 
 ############## tkinter #################
 ########################################
 
-# root = tkinter.Tk()
-# root.title('Tkinter Open File Dialog')
-# root.resizable(False, False)
-# root.geometry('300x150')
+class Main(tkinter.Tk):
+    def __init__(self):
+        super().__init__()
+        self.geometry('250x250+500+300')
+        self.title('Info')
+        button_1 = tkinter.Button(self, text='Выбрать изображение', font='Times 12',command=self.select_file)
+        button_1.pack(expand=True)
+
+    def select_file(self):
+        # self.filetypes = (
+        #     ('text files', '*.txt'),
+        #     ('All files', '*.*')
+        # )
+
+        self.filename = fd.askopenfilename(
+            title='Open a file',
+            initialdir='./'
+            # filetypes=self.filetypes
+        )
+        get_solution(self.filename)
+        self.top_level = Top(self.filename, 'Выбранное изображение')
+        self.top_level = Top('./assets/img_with_mistakes.png', 'Изображение с ошибками (зашумлённое)')
+        self.top_level = Top('./assets/img_without_mistakes.png', 'Изображение закодированное-зашумлённое-декодированное')
 
 
-# def select_file():
-#     filetypes = (
-#         ('text files', '*.txt'),
-#         ('All files', '*.*')
-#     )
+class Top(tkinter.Toplevel):
+    def __init__(self, filename, title):
+        super().__init__()
+        self.title(title)
+        self.img = Image.open(filename)
+        self.width, self.height = self.img.size
 
-#     filename = fd.askopenfilename(
-#         title='Open a file',
-#         initialdir='/',
-#         filetypes=filetypes)
+        self.geometry(f"{self.width}x{self.height}")
 
-#     showinfo(
-#         title='Selected File',
-#         message=filename
-#     )
+        self.img_tk = ImageTk.PhotoImage(self.img)
+        self.label = tkinter.Label(self, image=self.img_tk)
+        self.label.pack()
 
+if __name__ == "__main__":
+    main = Main()
+    main.mainloop()
 
-# # open button
-# open_button = ttk.Button(
-#     root,
-#     text='Open a File',
-#     command=select_file
-# )
-
-# open_button.pack(expand=True)
-
-
-# # run the application
-# root.mainloop()
-
-root = tkinter.Tk()
-root.title('Tkinter Open File Dialog')
-root.resizable(False, False)
-root.geometry('300x150')
-filename = fd.askopenfilename()
-print(filename)
-get_solution(filename)
-frame = tkinter.Frame(root)
-frame.grid()
-# #Добавим метку
-root.geometry('1000x500')
-label = tkinter.Label(frame, text="Фото").grid(row=1,column=1)
-canvas = tkinter.Canvas(root, height=400, width=700)
-image = Image.open(filename)
-photo = ImageTk.PhotoImage(image)
-image = canvas.create_image(0, 0, anchor='nw',image=photo)
-canvas.grid(row=2,column=1)
-root.mainloop()
-
-# root.quit()
-def createNewWindow():
-    win1 = tkinter.Toplevel()
-    # # создаем рабочую область
-    frame = tkinter.Frame(win1)
-    frame.grid()
-    # #Добавим метку
-    label = tkinter.Label(frame, text="Фото с ошибками").grid(row=1,column=1)
-    canvas = tkinter.Canvas(win1, height=400, width=700)
-    image = Image.open("./assets/img_with_mistakes.png")
-    photo = ImageTk.PhotoImage(image)
-    image = canvas.create_image(0, 0, anchor='nw',image=photo)
-    canvas.grid(row=2,column=1)
-    win1.mainloop()
-
+#############################################
+#############################################
+#############################################
 
 
 
