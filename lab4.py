@@ -267,8 +267,25 @@ def get_error_vectors(checking_sys_matrix_transpose1):
             error_vector.append(0)
         error_vector[i] = 1
         # т.к. единицы идут справа-налево по диагонали
-        error_vector.reverse()
+        # error_vector.reverse()
         error_vectors.append(error_vector)
+    
+    # вектора для декодирования двух ошибок, например:
+    # 110000
+    # 101000
+    # 100100
+    # ...
+    error_vectors2 = []
+
+    for i in range(len(error_vectors)):
+        for j in range(i+1, len(error_vectors)):
+            error_vector = deepcopy(error_vectors[i])
+            error_vector[j] = 1
+            error_vectors2.append(error_vector)
+    
+    for el in error_vectors2:
+        error_vectors.append(el)
+    
     return(error_vectors)
 
 # получаем число ошибок, которые код гарантированно находит
@@ -503,7 +520,7 @@ def make_mistake_in_pixels(array_pixels, num_of_errors):
     # print(array_pixels)
     return array_pixels_copy
 
-# из массива пикселей, состоящих из 3 векторов, в массив пикселей, состоящих из 3 
+# из массива пикселей, состоящих из 3 векторов, в массив пикселей, состоящих из 3 чисел
 def get_img_array_from_array_pixels(array_pixels_with_mistakes):
     array_pixels_with_mistakes_copy = deepcopy(array_pixels_with_mistakes)
     # структура img_array = [
@@ -532,37 +549,37 @@ def print_matr(text, matr):
         print(''.join(str(el) for el in row))
     print('')
 
-def correct_mistakes_in_pixels(array_pixels_with_mistakes):
+def correct_mistakes_in_pixels(array_pixels):
     ################################
     # исправляем ошибки в векторах #
     ################################
     
-    array_pixels_with_mistakes_copy = deepcopy(array_pixels_with_mistakes)
+    array_pixels_copy = deepcopy(array_pixels)
     # print(array_pixels_with_mistakes_copy)
 
 
 
-    # input_matrix_values = np.array([
-    #     [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
-    #     [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
-    #     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0],
-    #     [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1],
-    #     [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1],
-    #     [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0]
-    # ])
-
     input_matrix_values = np.array([
-        [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
-        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-        [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
-        [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
-        [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+        [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1],
+        [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1],
+        [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0]
     ])
+
+    # input_matrix_values = np.array([
+    #     [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1],
+    #     [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0],
+    #     [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
+    #     [0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1],
+    #     [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+    #     [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1],
+    #     [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0],
+    #     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
+    # ])
 
     print_matr('Порождающая матрица: ', input_matrix_values)
 
@@ -632,27 +649,26 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
     # print('syndromes',syndromes)
     print_matr('Синдромы: ', syndromes)
 
-    for i in range(len(array_pixels_with_mistakes_copy)):
-        for j in range(len(array_pixels_with_mistakes_copy[i])):
+    for i in range(len(array_pixels_copy)):
+        for j in range(len(array_pixels_copy[i])):
             # print(array_pixels[i][j])
-            for k in range(len(array_pixels_with_mistakes_copy[i][j])):
-                while array_pixels_with_mistakes_copy[i][j][k] in code_words == False:
-                    # print(array_pixels_with_mistakes_copy[i][j][k])
-                    # получаем индекс соответствующего информационного слова
-                    index_of_code_word = inf_words.index(array_pixels_with_mistakes_copy[i][j][k])
-                    
-                    # получаем закодированное информационное слово
-                    # print(code_words[index_of_code_word])
-                    # print(code_words[index_of_code_word])
-                    code_word_with_mistake = make_mistake_in_vector(deepcopy(code_words[index_of_code_word]), num_errors_fixed)
-                    # print(code_word_with_mistake)
-                    # print('########################')
-
-                    if (num_errors_fixed != 0 and array_pixels_with_mistakes_copy[i][j][k]):
+            for k in range(len(array_pixels_copy[i][j])):
+                # получаем индекс соответствующего информационного слова
+                index_of_code_word = inf_words.index(array_pixels_copy[i][j][k])
+                
+                # получаем закодированное информационное слово
+                code_word_with_mistake = make_mistake_in_vector(deepcopy(code_words[index_of_code_word]), num_errors_fixed)
+                # print(code_word_with_mistake)
+                # print(inf_words[index_of_code_word])
+                # print('########################')
+                # исправляем ошибку в кодовом слове, только в случае, если это слово не содержится в таблице кодовых слов
+                if code_word_with_mistake not in code_words:
+                    # print('really')
+                    if (num_errors_fixed != 0 and array_pixels_copy[i][j][k]):
                         
                         # print('checking_sys_matrix_transpose',checking_sys_matrix_transpose)
                         # print(checking_sys_matrix_transpose)
-                        # print(array_pixels_with_mistakes_copy[i][j][k])
+                        # print(array_pixels_copy[i][j][k])
                         if (len(code_word_with_mistake) != len(deepcopy(checking_sys_matrix_transpose))):
                             messagebox.showwarning(title="Предупреждение", message="Длина v-вектора не равна количеству строк проверочной систематической транспонированной матрицы")
                             return
@@ -686,8 +702,8 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
 
                         # print('c_vector',c_vector)
                         # получаем индекс нашего кодового слова
-                        array_pixels_with_mistakes_copy[i][j][k] = c_vector
-
+                        # array_pixels_copy[i][j][k] = c_vector
+                        # print(123,c_vector)
                     try:
                         # print(c_vector, 'c_vector')
                         # print(code_words)
@@ -700,13 +716,13 @@ def correct_mistakes_in_pixels(array_pixels_with_mistakes):
                         return
                     
                     # получаем информационное слово с таким же индексом, как и у кодового слова
-                    # print(array_pixels_with_mistakes_copy)
-                    # print(len(array_pixels_with_mistakes_copy))
-                    array_pixels_with_mistakes_copy[i][j][k] = inf_words[index_of_c_vector]
+                    # print(array_pixels_copy)
+                    # print(len(array_pixels_copy))
+                    array_pixels_copy[i][j][k] = inf_words[index_of_c_vector]
                     # print(inf_words[index_of_c_vector])
                     # print('i_vector',i_vector)
 
-    return array_pixels_with_mistakes_copy
+    return array_pixels_copy
 
 
 def get_solution(path_to_image):
@@ -719,8 +735,8 @@ def get_solution(path_to_image):
     # получаем массив пикселей
     array_pixels = get_array_pixels(img_array, len_of_color_in_double)
 
-    # получаем пиксели с количеством ошибок равным 3
-    array_pixels_with_mistakes = make_mistake_in_pixels(array_pixels, 3)
+    # получаем пиксели с количеством ошибок равным 2
+    array_pixels_with_mistakes = make_mistake_in_pixels(array_pixels, 2)
     # print(array_pixels_with_mistakes)
 
     img_array_from_array_pixels = get_img_array_from_array_pixels(array_pixels_with_mistakes)
@@ -738,7 +754,7 @@ def get_solution(path_to_image):
     img_without_mistakes.save('./assets/img_without_mistakes.png')
     # print(array_pixels_without_mistakes)
 
-    img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
+    # img_array = np.asarray(Image.open('./poehaly8x6.jpg').convert('RGB'))
 
     ################################
 # get_solution('./poehaly.jpg')
@@ -756,15 +772,18 @@ class Main(tkinter.Tk):
         button_1.pack(expand=True)
 
     def select_file(self):
-        # self.filetypes = (
-        #     ('text files', '*.txt'),
-        #     ('All files', '*.*')
-        # )
+        self.filetypes = (
+            ('png', '*.png'),
+            ('jpg', '*.jpg'),
+            ('jpeg', '*.jpeg'),
+            # если хотим выбирать ве файлы раскоментить нижнее
+            # ('All files', '*.*')
+        )
 
         self.filename = fd.askopenfilename(
             title='Open a file',
-            initialdir='./'
-            # filetypes=self.filetypes
+            initialdir='./',
+            filetypes=self.filetypes
         )
         get_solution(self.filename)
         self.top_level = Top(self.filename, 'Выбранное изображение')
@@ -795,7 +814,7 @@ if __name__ == "__main__":
 
 
 
-
+# 1100000111110111111101111
 # Для 3 ошибок
 # 1 0 0 0 0 0 0 0 1 1 1 0 1 0 1 1 1 1 0 0 1 0 0 1 1
 # 0 1 0 0 0 0 0 0 0 1 0 1 0 0 1 0 1 0 0 1 1 1 1 0 0
